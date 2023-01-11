@@ -29,7 +29,7 @@ public class Robert extends LinearOpMode {
                 AngleUnit.DEGREES
         );
 
-        flipper.setRange(90,300);
+        flipper.setRange(90,250);
 
         SimpleServo claw = new SimpleServo(
                 hardwareMap, "claw", 0, 180,
