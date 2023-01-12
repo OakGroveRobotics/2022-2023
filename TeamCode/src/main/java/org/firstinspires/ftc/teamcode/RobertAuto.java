@@ -25,7 +25,7 @@ public class RobertAuto extends LinearOpMode {
 
 
     private static final String TFOD_MODEL_ASSET = "ConeSleeve1.tflite";
-    private static final String TFOD_MODEL_FILE  = "/FIRST/tflitemodels/ConeSleeve1.tflite";
+    private static final String TFOD_MODEL_FILE  = "ConeSleeve1.tflite";
 
 
     private static final String[] LABELS = {
@@ -81,7 +81,7 @@ public class RobertAuto extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.2, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -148,7 +148,7 @@ public class RobertAuto extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
