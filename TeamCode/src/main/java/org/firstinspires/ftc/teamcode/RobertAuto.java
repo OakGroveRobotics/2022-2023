@@ -24,8 +24,8 @@ import java.util.List;
 public class RobertAuto extends LinearOpMode {
 
 
-    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/ConeSleeve1.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+    private static final String TFOD_MODEL_ASSET = "ConeSleeve1.tflite";
+    private static final String TFOD_MODEL_FILE  = "/FIRST/tflitemodels/ConeSleeve1.tflite";
 
 
     private static final String[] LABELS = {
@@ -149,6 +149,6 @@ public class RobertAuto extends LinearOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
