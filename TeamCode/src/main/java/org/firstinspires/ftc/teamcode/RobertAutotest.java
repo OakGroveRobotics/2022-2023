@@ -57,7 +57,7 @@ public class RobertAutotest extends LinearOpMode {
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
-        /** Wait for the game to begin */
+
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
