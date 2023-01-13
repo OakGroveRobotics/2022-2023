@@ -67,8 +67,13 @@ public class RobertAutotest extends LinearOpMode {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
                     ArrayList Objects = new ArrayList();
+                    List<Recognition> updatedRecognitions = null;
+
+                    while(Objects.size() < 10) {
+                        updatedRecognitions = tfod.getUpdatedRecognitions();
+                    }
 
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
@@ -78,7 +83,6 @@ public class RobertAutotest extends LinearOpMode {
 
                         Collections.sort(Objects);
 
-                        String Destinationmode(Objects);
 
 
                         /*if (recognition.getLabel().equals("1 Rectangle")) {
