@@ -24,14 +24,16 @@ import java.util.List;
 public class RobertAuto extends LinearOpMode {
 
 
-    private static final String TFOD_MODEL_ASSET = "ConeSleeve1.tflite";
-    private static final String TFOD_MODEL_FILE  = "ConeSleeve1.tflite";
+
+
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_FILE  = "Consleeve1.tflite";
 
 
     private static final String[] LABELS = {
-            "Side 1",
-            "Side 2",
-            "Side 3"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     /*
@@ -68,6 +70,13 @@ public class RobertAuto extends LinearOpMode {
         initVuforia();
         initTfod();
 
+        Mecanum drive = new Mecanum(
+                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
+        );
+
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -81,7 +90,7 @@ public class RobertAuto extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.2, 16.0/9.0);
+            tfod.setZoom(1.4, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -105,6 +114,14 @@ public class RobertAuto extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+
+                           // String tmp = recognition.getLabel();
+
+                            if(recognition.getLabel().equals("1 Bolt")){
+                                drive.driveRobotCentric(.5,0,0);
+                                sleep(100);
+                                break;
+                            }
 
                             telemetry.addData(""," ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
@@ -148,7 +165,7 @@ public class RobertAuto extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
