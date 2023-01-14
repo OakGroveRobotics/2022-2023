@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name="UseThisToDrive2023", group="Linear Opmode")
+@TeleOp(name="Robert", group="Linear Opmode")
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
@@ -39,13 +40,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
-@Autonomous(name = "RobertAutotest", group = "Concept")
+@Autonomous(name = "RobertAuto", group = "Concept", preselectTeleOp = "Robert")
+@Disabled
 public class RobertAutotest extends LinearOpMode {
 
 
     /**
      * Select one tflite model for the game
-     * {@link #initTfod()} Uncomment line 51 (private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";) and line 206 (tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);) to use PowerPlay.tflite models
+     * {@link #initTfod()} Uncomment line 51 (private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";)
+     * and line 206 (tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);)
+     * to use PowerPlay.tflite models
      *
      */
 
@@ -92,10 +96,6 @@ public class RobertAutotest extends LinearOpMode {
                 new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
         );
 
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
         if (tfod != null) {
             tfod.activate();
 
@@ -169,9 +169,6 @@ public class RobertAutotest extends LinearOpMode {
      * Initialize the Vuforia localization engine.
      */
     private void initVuforia() {
-        /**
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -193,8 +190,6 @@ public class RobertAutotest extends LinearOpMode {
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         // tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
