@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name="UseThisToDrive2023", group="Linear Opmode")
+@TeleOp(name="Robert", group="Linear Opmode")
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -29,7 +29,7 @@ public class Robert extends LinearOpMode {
                 AngleUnit.DEGREES
         );
 
-        flipper.setRange(90,300);
+        flipper.setRange(90,250);
 
         SimpleServo claw = new SimpleServo(
                 hardwareMap, "claw", 0, 180,
@@ -71,9 +71,13 @@ public class Robert extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double FORWARD_VEL = Math.abs(Control.getLeftY()) < .1 ? 0 : Control.getLeftY();
+         /* double FORWARD_VEL = Math.abs(Control.getLeftY()) < .1 ? 0 : Control.getLeftY();
             double STRAFE_VEL  = Math.abs(Control.getLeftX()) < .1 ? 0 : Control.getLeftX();
-            double ROTATE_VEL  = Math.abs(Control.getRightX()) < .1 ? 0 : Control.getRightX();
+            double ROTATE_VEL  = Math.abs(Control.getRightX()) < .1 ? 0 : Control.getRightX();*/
+
+            double FORWARD_VEL = Control.getLeftY();
+            double STRAFE_VEL  = Control.getLeftX();
+            double ROTATE_VEL  = Control.getRightX();
 
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3);
 
@@ -106,19 +110,19 @@ public class Robert extends LinearOpMode {
          //   }
 
             if(flip_forward){
-                flipper.rotateByAngle(.3);
+                flipper.rotateByAngle(.08);
             }
             else if(flip_top){
                 flipper.turnToAngle(100);
             }
             else if(flip_rear){
-                flipper.rotateByAngle(-.3);
+                flipper.rotateByAngle(-.08);
             }
             else if(flip_forward_by5){
-                flipper.rotateByAngle(.05);
+                flipper.rotateByAngle(-.05);
             }
             else if(flip_backward_by5){
-                flipper.rotateByAngle(-.05);
+                flipper.rotateByAngle(.05);
             }
 
 
