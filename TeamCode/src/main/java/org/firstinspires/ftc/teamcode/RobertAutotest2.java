@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -64,9 +66,9 @@ public class RobertAutotest2 extends LinearOpMode {
 
 
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "2 Circle",
+            "1 Rectangle",
+            "3 Triangle"
     };
 
     /*
@@ -103,6 +105,8 @@ public class RobertAutotest2 extends LinearOpMode {
         initVuforia();
         initTfod();
 
+        ElapsedTime elapsedTime = new ElapsedTime();
+
         Mecanum drive = new Mecanum(
                 new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
                 new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
@@ -130,36 +134,48 @@ public class RobertAutotest2 extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
+        elapsedTime.reset();
 
         if (opModeIsActive()) {
+            drive.driveRobotCentric(.15,0,0);//Speed Forward
             while (opModeIsActive()) {
                 if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions(); //Declare List of type Recognition named updatedRecognitions
+
+                    while(elapsedTime.time() < 8.25){ //Time Forward (Change this and Line 158)
+                        try { //Try to invoke isEmpty() method on updatedRecognitions
+                            if (updatedRecognitions != null && !(updatedRecognitions.isEmpty())) { // If updatedRecognitions isn't null and isn't empty
+                                telemetry.addData("Status", "Run Time5: " + elapsedTime.toString());
+                                telemetry.update();
+                                break; // break out of while loop
+                            }
+                        }
+                        catch(Exception e){
+                            //Catch nullPointerException from invoking isEmpty() method on null updatedRecognition
+                        }
+                        updatedRecognitions = tfod.getUpdatedRecognitions();
+                    }
+                    while(elapsedTime.time() < 8.25){ //Time Forward (Change this and Line 143)
+                        telemetry.addData("# Objects Detected1", updatedRecognitions.size());
+                        telemetry.addData("Status", "Run Time: " + elapsedTime.toString());
+                        telemetry.update();
+                    }
+                    drive.driveRobotCentric(0,0,0);
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                        telemetry.addData("Status", "Run Time1: " + elapsedTime.toString());
                         telemetry.update();
                         for (Recognition recognition : updatedRecognitions) {
-                            if(recognition.getLabel().equals("1 Bolt")){
-                                drive.driveRobotCentric(.5,0,0);
-                                sleep(1500);
+                            if(recognition.getLabel().equals("1 Rectangle")){
+                                drive.driveRobotCentric(0,-.5,0);//Speed Left
+                                sleep(1600); //Time Left
                                 drive.driveRobotCentric(0,0,0);
                                 break;
                             }
-                            if(recognition.getLabel().equals("2 Bulb")){
-                                drive.driveRobotCentric(0,-.5,0);
-                                sleep(1600);
-                                drive.driveRobotCentric(.5,0,0);
-                                sleep(1500);
-                                drive.driveRobotCentric(0,0,0);
-                                break;
-                            }
-                            if(recognition.getLabel().equals("3 Panel")){
-                                drive.driveRobotCentric(0,.5,0);
-                                sleep(1600);
-                                drive.driveRobotCentric(.5,0,0);
-                                sleep(1500);
+                            if(recognition.getLabel().equals("3 Triangle")){
+                                drive.driveRobotCentric(0,.5,0);//Speed Right
+                                sleep(1600); //Time Right
                                 drive.driveRobotCentric(0,0,0);
                                 break;
                             }
@@ -176,7 +192,7 @@ public class RobertAutotest2 extends LinearOpMode {
      * Initialize the Vuforia localization engine.
      */
     private void initVuforia() {
-        /*
+        /**
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
