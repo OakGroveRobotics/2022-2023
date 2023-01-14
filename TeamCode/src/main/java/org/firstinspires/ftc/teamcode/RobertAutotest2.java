@@ -29,9 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -49,8 +49,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
+@Autonomous(name = "RobertAutotest2", group = "Concept")
 public class RobertAutotest2 extends LinearOpMode {
 
     /*
@@ -61,7 +60,7 @@ public class RobertAutotest2 extends LinearOpMode {
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
     //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-     private static final String TFOD_MODEL_FILE  = "ConSleeve2";
+     private static final String TFOD_MODEL_FILE  = "ConeSleeve2.tflite";
 
 
     private static final String[] LABELS = {
@@ -83,7 +82,7 @@ public class RobertAutotest2 extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            " AcjeWAT/////AAABmc0E7FQPHETai5ZceoUNuTV5JBz3vGpqlk57SCvmEUPEU0Fl6NkLeZNkZBXuwYgfjSLG4VsvfQXqk0jcUiA1oTLZ7LVZI+SSpyfprp6TkQWsRmJuwJPc9mEseo41D3bnsvXY/fxHHsY/CilfOEV9t0+ZEMrrpTUrdM/XkixrKUPgUsihzkVF1NO82L1eLpiYK+YXGTNf3t3wmtmZ28Tsuy39IoS3qqy+DISCnhbm56AlEBlmZ2dIeTY5r9rLFgA/xYA8v73TSMLtI70C4MPW3FfCwxOXm+CvuPxX890mxgbkhKmIRAaLLK9cKVwa6lDlsgSmHyKKXwjT9lVcyew4OzAUe4AY+UEhR4Ywc3n1KgR2";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -103,6 +102,13 @@ public class RobertAutotest2 extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
+
+        Mecanum drive = new Mecanum(
+                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
+                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
+        );
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -133,26 +139,38 @@ public class RobertAutotest2 extends LinearOpMode {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        }
                         telemetry.update();
+                        for (Recognition recognition : updatedRecognitions) {
+                            if(recognition.getLabel().equals("1 Bolt")){
+                                drive.driveRobotCentric(.5,0,0);
+                                sleep(1500);
+                                drive.driveRobotCentric(0,0,0);
+                                break;
+                            }
+                            if(recognition.getLabel().equals("2 Bulb")){
+                                drive.driveRobotCentric(0,-.5,0);
+                                sleep(1600);
+                                drive.driveRobotCentric(.5,0,0);
+                                sleep(1500);
+                                drive.driveRobotCentric(0,0,0);
+                                break;
+                            }
+                            if(recognition.getLabel().equals("3 Panel")){
+                                drive.driveRobotCentric(0,.5,0);
+                                sleep(1600);
+                                drive.driveRobotCentric(.5,0,0);
+                                sleep(1500);
+                                drive.driveRobotCentric(0,0,0);
+                                break;
+                            }
+                            }
+
+                        }
                     }
                 }
             }
         }
-    }
+
 
     /**
      * Initialize the Vuforia localization engine.
@@ -164,7 +182,7 @@ public class RobertAutotest2 extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -184,7 +202,7 @@ public class RobertAutotest2 extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+       // tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
