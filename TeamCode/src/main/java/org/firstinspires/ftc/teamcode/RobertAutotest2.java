@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
@@ -41,7 +40,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 @Autonomous(name = "RobertAutotest2", group = "Concept")
-@Disabled
+
 public class RobertAutotest2 extends LinearOpMode {
 
 
@@ -100,7 +99,7 @@ public class RobertAutotest2 extends LinearOpMode {
             tfod.activate();
 
             //Set the zoom of the tfod engine
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(2.0, 16.0/9.0);
         }
 
         waitForStart();
@@ -108,7 +107,7 @@ public class RobertAutotest2 extends LinearOpMode {
         elapsedTime.reset();
 
         if (opModeIsActive()) {
-            drive.driveRobotCentric(.15,0,0);//Speed Forward
+            drive.driveRobotCentric(.128,0,0);//Speed Forward
             while (opModeIsActive()) {
                 if (tfod != null) {
 
@@ -142,6 +141,7 @@ public class RobertAutotest2 extends LinearOpMode {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
                         telemetry.addData("Status", "Run Time1: " + elapsedTime.toString());
                         telemetry.update();
+                        boolean objectDetected = false;
                         for (Recognition recognition : updatedRecognitions) { //We don't talk about this. .get() was throwing way too many index out of bounds errors.
                             //Yes, we realize this iterates through a list only to break out on the first loop
                             if(recognition.getLabel().equals("1 Rectangle")){
@@ -156,6 +156,7 @@ public class RobertAutotest2 extends LinearOpMode {
                                 drive.driveRobotCentric(0,0,0);
                                 break;
                             }
+
                         }
 
                     }

@@ -98,7 +98,7 @@ public class RobertAuto extends LinearOpMode {
             tfod.activate();
 
             //Set the zoom of the tfod engine
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(2.0, 16.0/9.0);
         }
 
         waitForStart();
