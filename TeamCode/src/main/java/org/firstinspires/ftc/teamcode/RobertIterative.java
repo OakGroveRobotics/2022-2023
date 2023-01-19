@@ -92,19 +92,12 @@ public class RobertIterative extends OpMode {
                 drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
             }
 
-            arm1.set(ARM_VEL);
-            arm2.set(ARM_VEL);
-
             if(openclaw){
                 claw.turnToAngle(50);
             }
             else if(closeclaw){
                 claw.turnToAngle(30);
             }
-
-        //    if(touch.isPressed()){
-
-         //   }
 
             if(flip_forward){
                 flipper.rotateByAngle(.08);
@@ -134,10 +127,3 @@ public class RobertIterative extends OpMode {
             telemetry.update();
         }
     }
-
-
-    @Override
-    public void loop() {
-
-    }
-}
