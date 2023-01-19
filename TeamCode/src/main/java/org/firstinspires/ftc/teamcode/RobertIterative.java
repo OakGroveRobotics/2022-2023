@@ -3,72 +3,66 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
 
-
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
 
+import java.util.ResourceBundle;
+
 @TeleOp(name="Robert", group="Linear Opmode")
-public class Robert extends LinearOpMode {
+public class RobertIterative extends OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     boolean RobotCentric;
 
+    Mecanum drive = new Mecanum(
+            new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
+    );
+
+    MotorGroup arm = new MotorGroup(new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223), new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223));
+
+    SimpleServo flipper = new SimpleServo(
+            hardwareMap, "flipper", 0, 300,
+            AngleUnit.DEGREES
+    );
+
+    SimpleServo claw = new SimpleServo(
+            hardwareMap, "claw", 0, 180,
+            AngleUnit.DEGREES
+    );
+
+    GamepadEx Control = new GamepadEx(gamepad1);
+
     @Override
-    public void runOpMode() {
+    public void init() {
 
+        arm.setZeroPowerBehavior(BRAKE);
 
-        SimpleServo flipper = new SimpleServo(
-                hardwareMap, "flipper", 0, 300,
-                AngleUnit.DEGREES
-        );
-
-        flipper.setRange(90,250);
-
-        SimpleServo claw = new SimpleServo(
-                hardwareMap, "claw", 0, 180,
-                AngleUnit.DEGREES
-        );
-
-        flipper.setInverted(false);
-
-        Mecanum drive = new Mecanum(
-                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
-        );
-
-        Motor arm1 = new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223);
-        Motor arm2 = new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223);
-
-        arm1.setZeroPowerBehavior(BRAKE);
-        arm2.setZeroPowerBehavior(BRAKE);
-
-        //arm1.setRunMode(Run);
-      //  arm2.setZeroPowerBehavior(BRAKE);
-
-     //  TouchSensor touch = hardwareMap.get(TouchSensor.class, "Touch");
-
-
-
-        GamepadEx Control = new GamepadEx(gamepad1);
+        flipper.setRange(90, 250);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        waitForStart();
-        runtime.reset();
+    }
 
+    public void start() {
+        runtime.reset();
+    }
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+    public void loop(){
 
          /* double FORWARD_VEL = Math.abs(Control.getLeftY()) < .1 ? 0 : Control.getLeftY();
             double STRAFE_VEL  = Math.abs(Control.getLeftX()) < .1 ? 0 : Control.getLeftX();
@@ -97,12 +91,6 @@ public class Robert extends LinearOpMode {
             if(RobotCentric){
                 drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
             }
-            else if(!RobotCentric){
-
-            }
-
-            arm1.set(ARM_VEL);
-            arm2.set(ARM_VEL);
 
             if(openclaw){
                 claw.turnToAngle(50);
@@ -110,10 +98,6 @@ public class Robert extends LinearOpMode {
             else if(closeclaw){
                 claw.turnToAngle(30);
             }
-
-        //    if(touch.isPressed()){
-
-         //   }
 
             if(flip_forward){
                 flipper.rotateByAngle(.08);
@@ -142,4 +126,4 @@ public class Robert extends LinearOpMode {
             telemetry.addData("flipper angle", "%4.4f", flipper.getPosition());
             telemetry.update();
         }
-    }}
+    }
