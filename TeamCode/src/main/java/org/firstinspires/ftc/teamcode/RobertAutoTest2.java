@@ -54,7 +54,9 @@ public class RobertAutoTest2 extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int Z1 = 4; //36H11 Tag 4 Goes to Zone 1
+    int Z2 = 7; //36H11 Tag 7 Goes to Zone 2
+    int Z3 = 11; //36H11 Tag 11 Goes to Zone 3
 
     AprilTagDetection tagOfInterest = null;
 
@@ -87,47 +89,31 @@ public class RobertAutoTest2 extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!isStarted() && !isStopRequested())
-        {
+        while (!isStarted() && !isStopRequested()) {
+
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if(currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == ID_TAG_OF_INTEREST)
-                    {
+                for(AprilTagDetection tag : currentDetections) {
+                    if(tag.id == Z1 || tag.id == Z2 || tag.id == Z3) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound)
-                {
+                if(tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
-                else
-                {
+                else {
                     telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
                 }
 
             }
-            else
-            {
+            else {
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
@@ -152,43 +138,34 @@ public class RobertAutoTest2 extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
+        if(tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
         }
-        else
-        {
+        else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
+        if(tagOfInterest == null) {
             /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
+                Detection Failure Autonomous
              */
         }
-        else
-        {
+        else {
             /*
              * Insert your autonomous code here, probably using the tag pose to decide your configuration.
              */
 
             // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
+            if(tagOfInterest.pose.x <= 20) {
                 // do something
             }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
+            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50) {
                 // do something else
             }
-            else if(tagOfInterest.pose.x >= 50)
-            {
+            else if(tagOfInterest.pose.x >= 50) {
                 // do something else
             }
         }
@@ -198,8 +175,7 @@ public class RobertAutoTest2 extends LinearOpMode
         while (opModeIsActive()) {sleep(20);}
     }
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
+    void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
