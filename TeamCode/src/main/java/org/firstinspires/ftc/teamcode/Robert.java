@@ -78,10 +78,6 @@ public class Robert extends LinearOpMode {
             double STRAFE_VEL  = Control.getLeftX();
             double ROTATE_VEL  = Control.getRightX();
 
-            if(gamepad2.a){
-
-            }
-
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3);
 
             boolean openclaw = Control.isDown(GamepadKeys.Button.RIGHT_BUMPER);
