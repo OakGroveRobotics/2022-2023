@@ -24,19 +24,24 @@ public class Robert extends LinearOpMode {
     public void runOpMode() {
 
 
-        SimpleServo flipper = new SimpleServo(
-                hardwareMap, "flipper", 0, 300,
+        SimpleServo flipper1 = new SimpleServo(
+                hardwareMap, "flipper1", 0, 300,
                 AngleUnit.DEGREES
         );
 
-        flipper.setRange(90,250);
+        SimpleServo flipper2 = new SimpleServo(
+                hardwareMap, "flipper2", 0, 300,
+                AngleUnit.DEGREES
+        );
+
+        //flipper.setRange(90,250);
 
         SimpleServo claw = new SimpleServo(
                 hardwareMap, "claw", 0, 180,
                 AngleUnit.DEGREES
         );
 
-        flipper.setInverted(false);
+        flipper1.setInverted(false);
 
         Mecanum drive = new Mecanum(
                 new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
@@ -112,19 +117,35 @@ public class Robert extends LinearOpMode {
          //   }
 
             if(flip_forward){
-                flipper.rotateByAngle(.08);
+                /*flipper1.rotateByAngle(.08);
+                flipper2.rotateByAngle(.08);
+
+                 */
+
+                flipper1.turnToAngle(300);
+                flipper2.turnToAngle(300);
             }
             else if(flip_top){
-                flipper.turnToAngle(100);
+                flipper1.turnToAngle(150);
+                flipper2.turnToAngle(150);
             }
             else if(flip_rear){
-                flipper.rotateByAngle(-.08);
+                /*flipper1.rotateByAngle(-.08);
+                flipper2.rotateByAngle(-.08);
+
+                 */
+
+                flipper1.turnToAngle(0);
+                flipper2.turnToAngle(0);
             }
             else if(flip_forward_by5){
-                flipper.rotateByAngle(-.05);
+                flipper1.rotateByAngle(-.05);
+                flipper2.rotateByAngle(-.05);
             }
             else if(flip_backward_by5){
-                flipper.rotateByAngle(.05);
+                flipper1.rotateByAngle(.05);
+                flipper2.rotateByAngle(.05);
+
             }
 
 
@@ -135,7 +156,7 @@ public class Robert extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("F/S/W", "%4.2f, %4.2f %4.2f", FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
-            telemetry.addData("flipper angle", "%4.4f", flipper.getPosition());
+            telemetry.addData("flipper angle", "%4.4f", flipper1.getPosition());
             telemetry.update();
         }
     }}

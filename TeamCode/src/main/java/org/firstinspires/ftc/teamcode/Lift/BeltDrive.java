@@ -6,7 +6,7 @@ public class BeltDrive {
 
     String[] Positions = null;
 
-    SimpleServo drive;
+    SimpleServo[] group;
 
     public BeltDrive(SimpleServo drive){
         this(drive, 0.0, 1.0, false);
@@ -16,8 +16,12 @@ public class BeltDrive {
         this(drive, MIN, MAX, false);
     }
 
+    public BeltDrive(SimpleServo drive, double MIN, double MAX, SimpleServo... followers){
+        this.group[0] = drive;
+    }
+
     public BeltDrive(SimpleServo drive, double MIN, double MAX, boolean INVERT){
-        this.drive = drive;
+        this.group[0] = drive;
         drive.setRange(MIN, MAX);
         drive.setInverted(INVERT);
     }
