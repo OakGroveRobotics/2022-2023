@@ -22,36 +22,33 @@ import java.util.ResourceBundle;
 public class RobertIterative extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
+
+    boolean RobotCentric;
+
+    Mecanum drive = new Mecanum(
+            new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
+            new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
+    );
+
+    MotorGroup arm = new MotorGroup(new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223), new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223));
+
+    SimpleServo flipper = new SimpleServo(
+            hardwareMap, "flipper", 0, 300,
+            AngleUnit.DEGREES
+    );
+
+    SimpleServo claw = new SimpleServo(
+            hardwareMap, "claw", 0, 180,
+            AngleUnit.DEGREES
+    );
+
+    GamepadEx Control = new GamepadEx(gamepad1);
+
+
     @Override
     public void init() {
-
-        boolean RobotCentric;
-
-        Mecanum drive = new Mecanum(
-                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
-        );
-
-        MotorGroup arm = new MotorGroup(new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223), new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223));
-
-        SimpleServo flipper = new SimpleServo(
-                hardwareMap, "flipper", 0, 300,
-                AngleUnit.DEGREES
-        );
-
-        SimpleServo claw = new SimpleServo(
-                hardwareMap, "claw", 0, 180,
-                AngleUnit.DEGREES
-        );
-
-        GamepadEx Control = new GamepadEx(gamepad1);
-
-
-        arm.setZeroPowerBehavior(BRAKE);
-
-        flipper.setRange(90, 250);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
