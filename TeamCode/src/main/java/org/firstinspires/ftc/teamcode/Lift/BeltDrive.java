@@ -41,7 +41,9 @@ public class BeltDrive {
     public void invert(int index){ BeltDrive[index].setInverted(true); }
 
     public void invert(int[] index){
-        for(int i = 0; i < index.length; i++) {BeltDrive[index[i]].setInverted(true); }
+        for(int i = 0; i < index.length; i++) {
+            BeltDrive[index[i]].setInverted(true);
+        }
     }
 
     public void addPosition(String name, double position){
@@ -53,6 +55,11 @@ public class BeltDrive {
         for(SimpleServo servo: BeltDrive) {
             servo.setPosition(tmp);
         }
+    }
+    public double getPosition() { return BeltDrive[0].getPosition(); }
+
+    public void rotateBy(double position) {
+        for (SimpleServo servo : BeltDrive) { servo.rotateBy(position); }
     }
 
 }
