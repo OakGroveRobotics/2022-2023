@@ -56,10 +56,7 @@ public class Robert extends LinearOpMode {
         arm1.setZeroPowerBehavior(BRAKE);
         arm2.setZeroPowerBehavior(BRAKE);
 
-        //arm1.setRunMode(Run);
-      //  arm2.setZeroPowerBehavior(BRAKE);
 
-     //  TouchSensor touch = hardwareMap.get(TouchSensor.class, "Touch");
 
 
 

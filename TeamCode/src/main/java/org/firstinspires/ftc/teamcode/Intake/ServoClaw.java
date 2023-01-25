@@ -6,7 +6,8 @@ public class ServoClaw {
 
     double clawRange;
 
-    double clawPosition;
+    double open = 1.0;
+    double close = 0.0;
 
     SimpleServo Claw;
 
@@ -25,15 +26,15 @@ public class ServoClaw {
     }
 
     public void Close(){
-        Claw.setPosition(0.0);
+        Claw.setPosition(close);
     }
+
+    public void setClose(double close){ this.close = close;}
 
     public void Open(){
-        Claw.setPosition(1.0);
+        Claw.setPosition(open);
     }
 
-
-
-
+    public void setOpen(double open){ this.open = open;}
 
 }
