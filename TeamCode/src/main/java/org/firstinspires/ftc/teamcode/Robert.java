@@ -75,12 +75,9 @@ public class Robert extends LinearOpMode {
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
 
 
-            if(RobotCentric){
-                drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
-            }
-            else if(!RobotCentric){
 
-            }
+            drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
+
 
             if(Control.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                 claw.Open();
@@ -107,11 +104,6 @@ public class Robert extends LinearOpMode {
                 flipper.rotateBy(.01);
 
             }
-
-
-
-
-            RobotCentric = Control.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) ^ RobotCentric;
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
