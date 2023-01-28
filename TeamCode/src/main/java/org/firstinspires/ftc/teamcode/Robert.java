@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Intake.ServoClaw;
 import org.firstinspires.ftc.teamcode.Lift.BeltDrive;
 import org.firstinspires.ftc.teamcode.Lift.CascadedLift;
 
-@TeleOp(name="Robert", group="Linear Opmode")
+@TeleOp(name="Robert", group="Competition")
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

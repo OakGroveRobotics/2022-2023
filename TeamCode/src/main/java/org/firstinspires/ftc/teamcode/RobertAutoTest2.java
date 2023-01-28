@@ -34,7 +34,7 @@
         import org.openftc.easyopencv.OpenCvCameraRotation;
         import java.util.ArrayList;
 
-@Autonomous
+@Autonomous(name = "RobertAutoTest2", group = "Staging", preselectTeleOp = "Robert")
 public class RobertAutoTest2 extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -68,8 +68,7 @@ public class RobertAutoTest2 extends LinearOpMode
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened()
             {
@@ -77,10 +76,7 @@ public class RobertAutoTest2 extends LinearOpMode
             }
 
             @Override
-            public void onError(int errorCode)
-            {
-
-            }
+            public void onError(int errorCode) { }
         });
 
         telemetry.setMsTransmissionInterval(50);
@@ -116,12 +112,10 @@ public class RobertAutoTest2 extends LinearOpMode
             else {
                 telemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
+                if(tagOfInterest == null) {
                     telemetry.addLine("(The tag has never been seen)");
                 }
-                else
-                {
+                else {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
