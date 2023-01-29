@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -20,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Lift.CascadedLift;
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    boolean RobotCentric;
 
     @Override
     public void runOpMode() {
@@ -40,12 +40,12 @@ public class Robert extends LinearOpMode {
 
         ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1);
 
-        Mecanum drive = new Mecanum(
-                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
-        );
+        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
+        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
+        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
+        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+
+        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
 
         CascadedLift lift = new CascadedLift(
                 new MotorGroup(
@@ -56,7 +56,7 @@ public class Robert extends LinearOpMode {
                 BRAKE
         );
 
-        GamepadExtension Control = new GamepadExtension(gamepad1);
+        GamepadEx Control = new GamepadEx(gamepad1);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");

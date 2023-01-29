@@ -23,11 +23,15 @@
 
         package org.firstinspires.ftc.teamcode;
 
+        import com.arcrobotics.ftclib.hardware.motors.Motor;
+        import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
+        import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
         import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
         import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
         import org.firstinspires.ftc.teamcode.AprilTagDetection.AprilTagDetectionPipeline;
+        import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
         import org.openftc.apriltag.AprilTagDetection;
         import org.openftc.easyopencv.OpenCvCamera;
         import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -35,12 +39,17 @@
         import java.util.ArrayList;
 
 @Autonomous(name = "RobertAutoTest2", group = "Staging", preselectTeleOp = "Robert")
-public class RobertAutoTest2 extends LinearOpMode
-{
+public class RobertAutoTest2 extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
+
+    static final double     COUNTS_PER_MOTOR_REV    = 8192 ;    // Rev Robotics Encoder
+    static final double     WHEEL_DIAMETER_INCHES   = 2.0 ;     // For figuring circumference
+    static final double     DISTANCE_PER_PULSE      = (Math.PI * WHEEL_DIAMETER_INCHES) / (COUNTS_PER_MOTOR_REV);
+    static final double     TRACKWIDTH              = 0.6;
+    static final double     CENTER_WHEEL_OFFSET     = 0.5;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -61,8 +70,28 @@ public class RobertAutoTest2 extends LinearOpMode
     AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
+
+        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
+        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
+        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
+        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+
+        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
+
+        Encoder leftSide = LeftFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        Encoder rightSide = RightFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        Encoder strafe = RightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+
+        rightSide.setDirection(Motor.Direction.REVERSE);
+
+        HolonomicOdometry odometry = new HolonomicOdometry(
+                leftSide::getDistance,
+                rightSide::getDistance,
+                strafe::getDistance,
+                TRACKWIDTH, CENTER_WHEEL_OFFSET
+        );
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);

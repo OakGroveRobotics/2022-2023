@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class BeltDrive {
 
-    private HashMap<String, Double> Positions;
+    private HashMap<String, Double> Positions = new HashMap<>();
 
     SimpleServo[] BeltDrive;
 

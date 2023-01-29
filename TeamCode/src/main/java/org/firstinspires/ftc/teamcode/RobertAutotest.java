@@ -86,16 +86,16 @@ public class RobertAutotest extends LinearOpMode {
         initVuforia();
         initTfod();
 
+        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
+        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
+        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
+        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+
         //Track the time this opmode is running
         ElapsedTime elapsedTime = new ElapsedTime();
 
         //Declare Mecanum object with 4 new motors
-        Mecanum drive = new Mecanum(
-                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
-        );
+        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftFront, RightRear);
 
         if (tfod != null) {
             tfod.activate();

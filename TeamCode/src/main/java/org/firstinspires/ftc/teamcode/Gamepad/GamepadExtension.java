@@ -44,25 +44,25 @@ public class GamepadExtension extends GamepadEx{
     @Override
     public double getLeftY() { //returns the LeftY axis of the gamepad if it's value is greater than the deadzone
         double ly = super.getLeftY(); //utilizes GamepadEx's getter method (Since we don't declare a gamepad in this extension)
-        return Math.abs(ly) < DZLY ? 0 : ly; // returns 0 if the absolute value of LeftY() is less than set deadzone, otherwise returns LeftY()
+        return Math.abs(ly) < DZLY ? ly : 0; // returns 0 if the absolute value of LeftY() is less than set deadzone, otherwise returns LeftY()
     }
 
     @Override
     public double getLeftX() {
         double lx = super.getLeftX();
-        return Math.abs(lx) < DZLX ? 0 : lx;
+        return Math.abs(lx) < DZLX ? lx : 0;
     }
 
     @Override
     public double getRightY() {
         double ry = super.getRightY();
-        return Math.abs(ry) < DZRY ? 0 : ry;
+        return Math.abs(ry) < DZRY ? ry : 0;
     }
 
     @Override
     public double getRightX() {
         double rx = super.getRightX();
-        return Math.abs(rx) < DZRX ? 0 : rx;
+        return Math.abs(rx) < DZRX ? rx : 0;
     }
 
 }
