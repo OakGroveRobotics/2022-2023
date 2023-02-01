@@ -38,7 +38,11 @@ public class Robert extends LinearOpMode {
 
         flipper.addPosition("upward", .5 );
 
+        flipper.setPosition("upward");
+
         ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1);
+
+        claw.addPosition(.5);
 
         Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
         Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
@@ -74,8 +78,6 @@ public class Robert extends LinearOpMode {
 
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
 
-
-
             drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
 
 
@@ -98,10 +100,10 @@ public class Robert extends LinearOpMode {
                 flipper.setPosition("rear");
             }
             else if(Control.isDown(GamepadKeys.Button.DPAD_DOWN)){
-                flipper.rotateBy(-.01);
+                flipper.rotateBy(-.0012);
             }
             else if(Control.isDown(GamepadKeys.Button.DPAD_UP)){
-                flipper.rotateBy(.01);
+                flipper.rotateBy(.0012);
 
             }
 
