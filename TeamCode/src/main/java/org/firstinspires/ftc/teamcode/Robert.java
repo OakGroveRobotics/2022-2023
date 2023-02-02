@@ -32,6 +32,7 @@ public class Robert extends LinearOpMode {
                 new SimpleServo(hardwareMap, "flipper2",0,300)
         );
 
+        //modify these
         flipper.addPosition("forward", .6 );
 
         flipper.addPosition("rear", .4 );
@@ -41,6 +42,9 @@ public class Robert extends LinearOpMode {
         int[] clawInvert = {0};
 
         ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1, clawInvert, new SimpleServo(hardwareMap,"claw2", 0,300));
+
+        claw.setClose(0); //modify these
+        claw.setOpen(1);
 
         Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
         Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
