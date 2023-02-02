@@ -76,8 +76,6 @@ public class Robert extends LinearOpMode {
 
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
 
-
-
             drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
 
 
@@ -91,12 +89,15 @@ public class Robert extends LinearOpMode {
             lift.Extend(ARM_VEL);
 
             if(Control.isDown(GamepadKeys.Button.B)){
+                claw.Close();
                 flipper.setPosition("forward");
             }
             else if(Control.isDown(GamepadKeys.Button.Y)){
+                claw.Close();
                 flipper.setPosition("upward");
             }
             else if(Control.isDown(GamepadKeys.Button.X)){
+                claw.Close();
                 flipper.setPosition("rear");
             }
             else if(Control.isDown(GamepadKeys.Button.DPAD_DOWN)){
