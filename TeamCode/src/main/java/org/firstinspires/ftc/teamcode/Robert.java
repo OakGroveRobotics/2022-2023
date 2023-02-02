@@ -38,7 +38,9 @@ public class Robert extends LinearOpMode {
 
         flipper.addPosition("upward", .5 );
 
-        ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1);
+        int[] clawInvert = {0};
+
+        ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1, clawInvert, new SimpleServo(hardwareMap,"claw2", 0,300));
 
         Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
         Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
