@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
 
 @Autonomous(name = "RobertAuto", group = "Concept", preselectTeleOp = "Robert")
+@Disabled
 public class RobertAuto extends LinearOpMode {
 
 
@@ -94,6 +96,8 @@ public class RobertAuto extends LinearOpMode {
                 new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
                 new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
         );
+
+
 
         if (tfod != null) {
             tfod.activate();

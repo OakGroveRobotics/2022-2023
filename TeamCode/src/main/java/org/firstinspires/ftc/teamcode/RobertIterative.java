@@ -18,10 +18,11 @@ import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
 
 import java.util.ResourceBundle;
 
-@TeleOp(name="Robert", group="Linear Opmode")
+@TeleOp(name="RobertIterative", group="Linear Opmode")
 public class RobertIterative extends OpMode {
-
     private ElapsedTime runtime = new ElapsedTime();
+
+
     boolean RobotCentric;
 
     Mecanum drive = new Mecanum(
@@ -45,12 +46,9 @@ public class RobertIterative extends OpMode {
 
     GamepadEx Control = new GamepadEx(gamepad1);
 
+
     @Override
     public void init() {
-
-        arm.setZeroPowerBehavior(BRAKE);
-
-        flipper.setRange(90, 250);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");

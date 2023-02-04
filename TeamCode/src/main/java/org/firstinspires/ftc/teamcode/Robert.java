@@ -3,60 +3,69 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
 
-
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
+import org.firstinspires.ftc.teamcode.Gamepad.GamepadExtension;
+import org.firstinspires.ftc.teamcode.Intake.ServoClaw;
+import org.firstinspires.ftc.teamcode.Lift.BeltDrive;
+import org.firstinspires.ftc.teamcode.Lift.CascadedLift;
 
-@TeleOp(name="Robert", group="Linear Opmode")
+@TeleOp(name="Robert", group="Competition")
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    boolean RobotCentric;
 
     @Override
     public void runOpMode() {
 
-
-        SimpleServo flipper = new SimpleServo(
-                hardwareMap, "flipper", 0, 300,
-                AngleUnit.DEGREES
+        BeltDrive flipper = new BeltDrive(
+                new SimpleServo(hardwareMap, "flipper1",0,300),
+                0,
+                1,
+                new SimpleServo(hardwareMap, "flipper2",0,300)
         );
 
-        flipper.setRange(90,250);
+        //modify these
+        flipper.addPosition("forward", 1 );
 
-        SimpleServo claw = new SimpleServo(
-                hardwareMap, "claw", 0, 180,
-                AngleUnit.DEGREES
+        flipper.addPosition("rear", 0 );
+
+        flipper.addPosition("upward", .5 );
+
+        int[] clawInvert = {0};
+
+        ServoClaw claw = new ServoClaw(
+                new SimpleServo(hardwareMap, "claw",0,300),
+                0,
+                1,
+                clawInvert,
+                new SimpleServo(hardwareMap,"claw2", 0,300));
+
+        claw.setClose(0); //modify these
+        claw.setOpen(1);
+
+        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
+        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
+        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
+        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+
+        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
+
+        CascadedLift lift = new CascadedLift(
+                new MotorGroup(
+                        new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223),
+                        new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223)
+                ),
+                1.0,
+                BRAKE
         );
-
-        flipper.setInverted(false);
-
-        Mecanum drive = new Mecanum(
-                new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223),
-                new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223)
-        );
-
-        Motor arm1 = new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223);
-        Motor arm2 = new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223);
-
-        arm1.setZeroPowerBehavior(BRAKE);
-        arm2.setZeroPowerBehavior(BRAKE);
-
-        //arm1.setRunMode(Run);
-      //  arm2.setZeroPowerBehavior(BRAKE);
-
-     //  TouchSensor touch = hardwareMap.get(TouchSensor.class, "Touch");
-
-
 
         GamepadEx Control = new GamepadEx(gamepad1);
 
@@ -70,71 +79,43 @@ public class Robert extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-         /* double FORWARD_VEL = Math.abs(Control.getLeftY()) < .1 ? 0 : Control.getLeftY();
-            double STRAFE_VEL  = Math.abs(Control.getLeftX()) < .1 ? 0 : Control.getLeftX();
-            double ROTATE_VEL  = Math.abs(Control.getRightX()) < .1 ? 0 : Control.getRightX();*/
-
             double FORWARD_VEL = Control.getLeftY();
             double STRAFE_VEL  = Control.getLeftX();
             double ROTATE_VEL  = Control.getRightX();
 
-            if(gamepad2.a){
+            double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
 
+            drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
+
+
+            if(Control.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                claw.Open();
+            }
+            else if(Control.isDown(GamepadKeys.Button.LEFT_BUMPER)){
+                claw.Close();
             }
 
-            double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3);
+            lift.Extend(ARM_VEL);
 
-            boolean openclaw = Control.isDown(GamepadKeys.Button.RIGHT_BUMPER);
-            boolean closeclaw = Control.isDown(GamepadKeys.Button.LEFT_BUMPER);
-
-            boolean flip_forward = Control.isDown(GamepadKeys.Button.B);
-            boolean flip_top = Control.isDown(GamepadKeys.Button.Y);
-            boolean flip_rear = Control.isDown(GamepadKeys.Button.X);
-            boolean flip_forward_by5 = Control.isDown(GamepadKeys.Button.DPAD_DOWN);
-            boolean flip_backward_by5 = Control.isDown(GamepadKeys.Button.DPAD_UP);
-
-
-            if(RobotCentric){
-                drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
+            if(Control.isDown(GamepadKeys.Button.B)){
+                claw.Close();
+                flipper.setPosition("forward");
             }
-            else if(!RobotCentric){
+            else if(Control.isDown(GamepadKeys.Button.Y)){
+                claw.Close();
+                flipper.setPosition("upward");
+            }
+            else if(Control.isDown(GamepadKeys.Button.X)){
+                claw.Close();
+                flipper.setPosition("rear");
+            }
+            else if(Control.isDown(GamepadKeys.Button.DPAD_DOWN)){
+                flipper.rotateBy(-.0025);
+            }
+            else if(Control.isDown(GamepadKeys.Button.DPAD_UP)){
+                flipper.rotateBy(.0025);
 
             }
-
-            arm1.set(ARM_VEL);
-            arm2.set(ARM_VEL);
-
-            if(openclaw){
-                claw.turnToAngle(50);
-            }
-            else if(closeclaw){
-                claw.turnToAngle(30);
-            }
-
-        //    if(touch.isPressed()){
-
-         //   }
-
-            if(flip_forward){
-                flipper.rotateByAngle(.08);
-            }
-            else if(flip_top){
-                flipper.turnToAngle(100);
-            }
-            else if(flip_rear){
-                flipper.rotateByAngle(-.08);
-            }
-            else if(flip_forward_by5){
-                flipper.rotateByAngle(-.05);
-            }
-            else if(flip_backward_by5){
-                flipper.rotateByAngle(.05);
-            }
-
-
-
-
-            RobotCentric = Control.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) ^ RobotCentric;
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
