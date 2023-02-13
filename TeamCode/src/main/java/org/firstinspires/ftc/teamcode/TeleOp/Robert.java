@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
@@ -21,53 +21,73 @@ import org.firstinspires.ftc.teamcode.Lift.CascadedLift;
 public class Robert extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime2 = new ElapsedTime();
+
+    int[] clawInvert = {0};
+
+    int armPosition = 0;
+
+    SimpleServo flipper1, flipper2, claw1, claw2;
+    Motor LeftFront, RightFront, LeftRear, RightRear, Arm1, Arm2;
+
+    GamepadEx Control;
 
     @Override
     public void runOpMode() {
 
+         flipper1   = new SimpleServo(hardwareMap, "flipper1",0,300);
+         flipper2   = new SimpleServo(hardwareMap, "flipper2",0,300);
+
+         claw1      = new SimpleServo(hardwareMap, "claw",0,300);
+         claw2      = new SimpleServo(hardwareMap, "claw2",0,300);
+
+         LeftFront  = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
+         RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
+         LeftRear   = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
+         RightRear  = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+
+         Arm1       = new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223);
+         Arm2       = new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223);
+
+
+
         BeltDrive flipper = new BeltDrive(
-                new SimpleServo(hardwareMap, "flipper1",0,300),
+                flipper1,
                 0,
                 1,
-                new SimpleServo(hardwareMap, "flipper2",0,300)
+                flipper2
         );
 
         //modify these
-        flipper.addPosition("forward", 1 );
+        flipper.addPosition("forward", 1.0 );
 
-        flipper.addPosition("rear", 0 );
+        flipper.addPosition("rear", 0.0 );
 
         flipper.addPosition("upward", .5 );
 
-        int[] clawInvert = {0};
 
         ServoClaw claw = new ServoClaw(
-                new SimpleServo(hardwareMap, "claw",0,300),
-                0,
-                1,
+                claw1,
+                0.0,
+                1.0,
                 clawInvert,
-                new SimpleServo(hardwareMap,"claw2", 0,300));
+                claw2);
 
         claw.setClose(0); //modify these
         claw.setOpen(1);
-
-        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
-        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
-        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
-        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
 
         Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
 
         CascadedLift lift = new CascadedLift(
                 new MotorGroup(
-                        new Motor(hardwareMap, "arm1", Motor.GoBILDA.RPM_223),
-                        new Motor(hardwareMap, "arm2", Motor.GoBILDA.RPM_223)
+                        Arm1,
+                        Arm2
                 ),
                 1.0,
                 BRAKE
         );
 
-        GamepadEx Control = new GamepadEx(gamepad1);
+        Control = new GamepadEx(gamepad1);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -75,6 +95,7 @@ public class Robert extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        runtime2.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -83,7 +104,7 @@ public class Robert extends LinearOpMode {
             double STRAFE_VEL  = Control.getLeftX();
             double ROTATE_VEL  = Control.getRightX();
 
-            double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
+            double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5.0/3.0); // Math for Lift Extend
 
             drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
 
@@ -95,15 +116,16 @@ public class Robert extends LinearOpMode {
                 claw.Close();
             }
 
+
+
             lift.Extend(ARM_VEL);
 
             if(Control.isDown(GamepadKeys.Button.B)){
                 claw.Close();
                 flipper.setPosition("forward");
             }
-            else if(Control.isDown(GamepadKeys.Button.Y)){
-                claw.Close();
-                flipper.setPosition("upward");
+            else if(Control.wasJustPressed(GamepadKeys.Button.A)){
+
             }
             else if(Control.isDown(GamepadKeys.Button.X)){
                 claw.Close();
@@ -116,11 +138,14 @@ public class Robert extends LinearOpMode {
                 flipper.rotateBy(.0025);
 
             }
+            runtime.reset();
+            runtime2.reset();
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("F/S/W", "%4.2f, %4.2f %4.2f", FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
             telemetry.addData("flipper angle", "%4.4f", flipper.getPosition());
+            telemetry.addData("Loop Time","Current " + runtime.toString(), "Previous" + runtime2.toString());
             telemetry.update();
         }
     }}

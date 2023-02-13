@@ -3,6 +3,8 @@
 package org.firstinspires.ftc.teamcode.Gamepad;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys.Button;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -34,6 +36,9 @@ public class GamepadExtension extends GamepadEx{
     public boolean getButton(Button button) {
         return super.getButton(button);
     }
+    public int getButtonInt(Button button) { return (super.getButton(button) ? 1 : 0);}
+
+    public double getTrigger(GamepadKeys.Trigger trigger){ return super.getTrigger(trigger);}
 
     public void setDeadzone(double leftY, double leftX, double rightY, double rightX){ //Setter method for Deadzones around each Gamepad stick axis
          DZLY = leftY;
