@@ -55,7 +55,7 @@ public class CascadedLift {
         Lift.set(-MAX_POWER);
     }
 
-    public void setPositionCoefficient(double kp){ Lift.setPositionCoefficient(kp); }
+    public void setVeloCoefficients(double kp, double ki, double kd){ Lift.setVeloCoefficients(kp, ki, kd); }
 
     public void setDistancePerPulse(double distancePerPulse){ Lift.setDistancePerPulse(distancePerPulse); }
 
@@ -72,5 +72,16 @@ public class CascadedLift {
     public void setRunMode( RunMode runmode){ Lift.setRunMode(runmode);}
 
     public void resetPosition(){ Lift.resetEncoder(); }
+
+    public void goToPosition(){
+        if(!(Lift.atTargetPosition())){
+            Lift.set(MAX_POWER);
+        }
+    }
+    public void goToPosition(double speed){
+        if(!(Lift.atTargetPosition())){
+            Lift.set(speed);
+        }
+    }
 
 }

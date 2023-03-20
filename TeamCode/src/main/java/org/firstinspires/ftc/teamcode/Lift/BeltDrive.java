@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class BeltDrive {
 
-    private HashMap<String, Double> Positions = new HashMap<>();
+    private final HashMap<String, Double> Positions = new HashMap<>();
 
     SimpleServo[] BeltDrive;
 
@@ -41,8 +41,8 @@ public class BeltDrive {
     public void invert(int index){ BeltDrive[index].setInverted(true); }
 
     public void invert(int[] index){
-        for(int i = 0; i < index.length; i++) {
-            BeltDrive[index[i]].setInverted(true);
+        for(int ind: index) {
+            BeltDrive[ind].setInverted(true);
         }
     }
 
