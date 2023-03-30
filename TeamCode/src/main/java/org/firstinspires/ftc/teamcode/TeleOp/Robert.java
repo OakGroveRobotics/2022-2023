@@ -23,8 +23,7 @@ import java.util.List;
 @TeleOp(name="Robert", group="Competition")
 public class Robert extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private ElapsedTime runtime2 = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     int[] clawInvert = {0};
 
@@ -117,7 +116,6 @@ public class Robert extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        runtime2.reset();
 
         // run until the end of the match (driver presses STOP)
         while (!isStarted() && !isStopRequested()) {
@@ -135,7 +133,12 @@ public class Robert extends LinearOpMode {
 
 
             if(Control.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || Control.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) ) {
-               if(claw.)
+               if(claw.isOpen()){
+                   claw.Close();
+               }
+               else{
+                   claw.Open();
+               }
             }
 
             if(Control.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)){
@@ -167,20 +170,15 @@ public class Robert extends LinearOpMode {
 
             }
 
-
-
             Control.readButtons();
 
-
-
             runtime.reset();
-            runtime2.reset();
+
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("F/S/W", "%4.2f, %4.2f %4.2f", FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
             telemetry.addData("flipper angle", "%4.4f", flipper.getPosition());
-            telemetry.addData("Loop Time","Current " + runtime.toString(), "Previous" + runtime2.toString());
+            telemetry.addData("Loop Time",  runtime.toString());
             telemetry.update();
         }
     }
