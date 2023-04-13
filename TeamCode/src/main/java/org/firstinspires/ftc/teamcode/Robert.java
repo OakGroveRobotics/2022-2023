@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Gamepad.GamepadExtension;
 import org.firstinspires.ftc.teamcode.Intake.ServoClaw;
 import org.firstinspires.ftc.teamcode.Lift.BeltDrive;
 import org.firstinspires.ftc.teamcode.Lift.CascadedLift;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name="Robert", group="Competition")
 public class Robert extends LinearOpMode {
@@ -46,12 +48,7 @@ public class Robert extends LinearOpMode {
         claw.setClose(0); //modify these
         claw.setOpen(1);
 
-        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
-        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
-        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
-        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
-
-        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         CascadedLift lift = new CascadedLift(
                 new MotorGroup(
@@ -80,15 +77,19 @@ public class Robert extends LinearOpMode {
 
             double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
 
-            drive.driveRobotCentric(FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
+            drive.setWeightedDrivePower( new Pose2d(
+                    -Control.getLeftY(),
+                    -Control.getLeftX(),
+                    -Control.getRightX()
+                )
+            );
+
+            drive.update();
 
 
-            if(Control.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                claw.Open();
-            }
-            else if(Control.isDown(GamepadKeys.Button.LEFT_BUMPER)){
-                claw.Close();
-            }
+            if(Control.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || Control.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                //if(claw.Open();
+            )
 
             lift.Extend(ARM_VEL);
 
