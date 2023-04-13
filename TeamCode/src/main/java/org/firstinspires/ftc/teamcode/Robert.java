@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static com.arcrobotics.ftclib.hardware.motors.Motor.RunMode.PositionControl;
 import static com.arcrobotics.ftclib.hardware.motors.Motor.ZeroPowerBehavior.BRAKE;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -59,6 +60,17 @@ public class Robert extends LinearOpMode {
                 BRAKE
         );
 
+        lift.addPosition(0,0);
+        lift.addPosition(1,1);
+        lift.addPosition(2,2);
+
+        lift.setPositionTolerance(0.01);
+        lift.setVeloCoefficients(1,0,0);
+        lift.setDistancePerPulse(2048);
+        lift.setRunMode(PositionControl);
+        lift.setMaxPower(0.5);
+        lift.resetPosition();
+
         GamepadEx Control = new GamepadEx(gamepad1);
 
         // Wait for the game to start (driver presses PLAY)
@@ -69,7 +81,7 @@ public class Robert extends LinearOpMode {
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (!this.isStopRequested() && this.isStarted()) {
 
             double FORWARD_VEL = Control.getLeftY();
             double STRAFE_VEL  = Control.getLeftX();
@@ -88,8 +100,11 @@ public class Robert extends LinearOpMode {
 
 
             if(Control.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || Control.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                //if(claw.Open();
-            )
+                if (claw.isOpen()) {
+                    claw.Close();
+                } else
+                    claw.Open();
+            }
 
             lift.Extend(ARM_VEL);
 
@@ -112,6 +127,8 @@ public class Robert extends LinearOpMode {
                 flipper.rotateBy(.01);
 
             }
+            Control.readButtons();
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

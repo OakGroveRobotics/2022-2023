@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.Intake;
 
+import static com.arcrobotics.ftclib.util.MathUtils.clamp;
+
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+
+import java.util.HashMap;
+
 
 public class ServoClaw {
 
-    List<Double> Pos = new LinkedList<>();
-
-    double open = 1.0;
-    double close = 0.0;
+    double open;
+    double close;
 
     SimpleServo[] Claw;
 
@@ -39,14 +39,14 @@ public class ServoClaw {
             this.Claw[i+1] = followers[i];
             this.Claw[i+1].setRange(MIN, MAX);
         }
-        invert(INVERT);
+        initInvert(INVERT);
         init();
 
     }
 
-    public void invert(int[] index){
-        for(int i = 0; i < index.length; i++) {
-            Claw[index[i]].setInverted(true);
+    public void initInvert(int[] index){
+        for(int ind: index) {
+            Claw[ind].setInverted(true);
         }
     }
 
@@ -56,7 +56,7 @@ public class ServoClaw {
         }
     }
 
-    public void setClose(double close){ this.close = close;}
+    public void setClose(double pos){close = pos;}
 
     public void Open(){
         for(SimpleServo servo: Claw) {
@@ -64,25 +64,36 @@ public class ServoClaw {
         }
     }
 
-    public void setOpen(double open){ this.open = open;}
+    public void setOpen(double pos){open = pos;}
 
-    public void addPosition(double pos){
-        Pos.add(1, pos);
-    }
 
-    public void addPosition(double pos, int index){
-        Pos.add(index,pos);
-    }
+    public void setPos(double pos){
+        double temp = clamp(pos, close, open);
 
-    public void setPos(int index){
-        for(SimpleServo servo: Claw){
-            servo.setPosition(Pos.get(index));
+        for(SimpleServo servo: Claw) {
+            servo.setPosition(temp);
         }
     }
 
+    public double getPos(){
+        return Claw[0].getPosition();
+    }
+
+    public boolean isOpen(){
+        return Claw[0].getPosition() == open;
+    }
+    public boolean isClosed(){
+        return Claw[0].getPosition() == close;
+    }
+
+    public void invert(){
+        double tempPos = this.getPos();
+
+
+    }
     private void init(){
-        Pos.add(close);
-        Pos.add(open);
+        this.setClose(0.0);
+        this.setOpen(1.0);
     }
 
 
