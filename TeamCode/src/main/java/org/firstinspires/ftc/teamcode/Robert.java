@@ -28,6 +28,17 @@ public class Robert extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        SimpleServo rightOdemetry = new SimpleServo(hardwareMap, "odometry_servo_right",0, 300);
+        SimpleServo leftOdemetry = new SimpleServo(hardwareMap, "odometry_servo_left",0, 300);
+        SimpleServo frontOdemetry = new SimpleServo(hardwareMap, "odometry_servo_front",0, 300);
+
+        rightOdemetry.setInverted(true);
+//        leftOdemetry.setInverted(true);
+
+        rightOdemetry.setPosition(.4);
+        leftOdemetry.setPosition(.4);
+        frontOdemetry.setPosition(.7);
+
         BeltDrive flipper = new BeltDrive(
                 new SimpleServo(hardwareMap, "flipper1",0,300),
                 0,
@@ -46,8 +57,8 @@ public class Robert extends LinearOpMode {
 
         ServoClaw claw = new ServoClaw(new SimpleServo(hardwareMap, "claw",0,300),0, 1, clawInvert, new SimpleServo(hardwareMap,"claw2", 0,300));
 
-        claw.setClose(0); //modify these
-        claw.setOpen(1);
+        claw.setClose(.3); //modify these
+        claw.setOpen(.8);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -60,16 +71,23 @@ public class Robert extends LinearOpMode {
                 BRAKE
         );
 
-        lift.addPosition(0,0);
-        lift.addPosition(1,1);
-        lift.addPosition(2,2);
+        lift.setInverted(true);
 
-        lift.setPositionTolerance(0.01);
-        lift.setVeloCoefficients(1,0,0);
-        lift.setDistancePerPulse(2048);
+        lift.addPosition(0,200);
+        lift.addPosition(1,500);
+        lift.addPosition(2,1000);
+
+        lift.setPositionTolerance(.001);
+        lift.setVeloCoefficients(3,0,0);
+        lift.setDistancePerPulse(.0137);
         lift.setRunMode(PositionControl);
-        lift.setMaxPower(0.5);
+        lift.setMaxPower(0.1);
         lift.resetPosition();
+
+        double rightTriggerPrev = 0;
+        double leftTriggerPrev = 0;
+
+        int liftPosition = 0;
 
         GamepadEx Control = new GamepadEx(gamepad1);
 
@@ -87,10 +105,8 @@ public class Robert extends LinearOpMode {
             double STRAFE_VEL  = Control.getLeftX();
             double ROTATE_VEL  = Control.getRightX();
 
-            double ARM_VEL = Math.pow(-Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),5/3); // Math for Lift Extend
-
             drive.setWeightedDrivePower( new Pose2d(
-                    -Control.getLeftY(),
+                    Control.getLeftY(),
                     -Control.getLeftX(),
                     -Control.getRightX()
                 )
@@ -106,7 +122,29 @@ public class Robert extends LinearOpMode {
                     claw.Open();
             }
 
-            lift.Extend(ARM_VEL);
+            if((Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > .5) && rightTriggerPrev < .5){
+                if(liftPosition == 2){
+                    lift.setTargetPosition(2);
+                }
+                else {
+                    lift.setTargetPosition(++liftPosition);
+                }
+            }
+            else if((Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > .5) && leftTriggerPrev < .5){
+                if(liftPosition == 0){
+                    lift.setTargetPosition(0);
+                }
+                else {
+                    lift.setTargetPosition(--liftPosition);
+                }
+            }
+
+            if(!lift.atTargetPosition()){
+                lift.goToPosition(.1);
+            }
+            else{
+                lift.goToPosition(0);
+            }
 
             if(Control.isDown(GamepadKeys.Button.B)){
                 claw.Close();
@@ -129,9 +167,13 @@ public class Robert extends LinearOpMode {
             }
             Control.readButtons();
 
+            rightTriggerPrev = Control.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            leftTriggerPrev = Control.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Claw", "%4.2f",  claw.getPos());
+            telemetry.addData("arm", "%4.2f",  lift.get());
             telemetry.addData("F/S/W", "%4.2f, %4.2f %4.2f", FORWARD_VEL, STRAFE_VEL, ROTATE_VEL);
             telemetry.addData("flipper angle", "%4.4f", flipper.getPosition());
             telemetry.update();

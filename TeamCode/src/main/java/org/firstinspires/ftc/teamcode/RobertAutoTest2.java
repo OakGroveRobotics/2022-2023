@@ -23,6 +23,10 @@
 
         package org.firstinspires.ftc.teamcode;
 
+        import com.acmerobotics.roadrunner.geometry.Pose2d;
+        import com.acmerobotics.roadrunner.geometry.Vector2d;
+        import com.acmerobotics.roadrunner.trajectory.Trajectory;
+        import com.arcrobotics.ftclib.hardware.SimpleServo;
         import com.arcrobotics.ftclib.hardware.motors.Motor;
         import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
         import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
@@ -32,6 +36,7 @@
         import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
         import org.firstinspires.ftc.teamcode.AprilTagDetection.AprilTagDetectionPipeline;
         import org.firstinspires.ftc.teamcode.Drivebase.Mecanum;
+        import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
         import org.openftc.apriltag.AprilTagDetection;
         import org.openftc.easyopencv.OpenCvCamera;
         import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -72,25 +77,27 @@ public class RobertAutoTest2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Motor LeftFront = new Motor(hardwareMap, "left_front_drive", Motor.GoBILDA.RPM_223);
-        Motor RightFront = new Motor(hardwareMap, "right_front_drive", Motor.GoBILDA.RPM_223);
-        Motor LeftRear = new Motor(hardwareMap, "left_rear_drive", Motor.GoBILDA.RPM_223);
-        Motor RightRear = new Motor(hardwareMap, "right_rear_drive", Motor.GoBILDA.RPM_223);
+        SimpleServo rightOdemetry = new SimpleServo(hardwareMap, "odometry_servo_right", 0, 300);
+        SimpleServo leftOdemetry = new SimpleServo(hardwareMap, "odometry_servo_left", 0, 300);
+        SimpleServo frontOdemetry = new SimpleServo(hardwareMap, "odometry_servo_front", 0, 300);
 
-        Mecanum drive = new Mecanum(LeftFront, RightFront, LeftRear, RightRear);
+        rightOdemetry.setInverted(true);
+//        leftOdemetry.setInverted(true);
 
-        Encoder leftSide = LeftFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
-        Encoder rightSide = RightFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
-        Encoder strafe = RightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        rightOdemetry.setPosition(.1);
+        leftOdemetry.setPosition(0);
+        frontOdemetry.setPosition(.3);
 
-        rightSide.setDirection(Motor.Direction.REVERSE);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        HolonomicOdometry odometry = new HolonomicOdometry(
-                leftSide::getDistance,
-                rightSide::getDistance,
-                strafe::getDistance,
-                TRACKWIDTH, CENTER_WHEEL_OFFSET
-        );
+        drive.setPoseEstimate(new Pose2d());
+
+        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
+                .splineTo(new Vector2d(10, 10), 0)
+                .build();
+
+        int i = 0;
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -99,60 +106,45 @@ public class RobertAutoTest2 extends LinearOpMode {
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) { }
+            public void onError(int errorCode) {
+            }
         });
 
         telemetry.setMsTransmissionInterval(50);
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
         while (!isStarted() && !isStopRequested()) {
 
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0) {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections) {
-                    if(tag.id == Z1 || tag.id == Z2 || tag.id == Z3) {
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == Z1 || tag.id == Z2 || tag.id == Z3) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound) {
+                if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else {
+                } else {
                     telemetry.addLine("Don't see tag of interest :(");
                 }
 
-            }
-            else {
+            } else {
                 telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null) {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-
             }
 
             telemetry.update();
-            sleep(20);
+            sleep(2000);
         }
 
         /*
@@ -161,43 +153,32 @@ public class RobertAutoTest2 extends LinearOpMode {
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null) {
+        if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
-        }
-        else {
+        } else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
 
-        if(tagOfInterest == null) {
-            /*
-                Detection Failure Autonomous
-             */
-        }
-        else {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
 
+
+        while (!this.isStopRequested() && this.isStarted()) {
+            if( i == 0) {
+                drive.followTrajectory(myTrajectory);
+                i++;
+            }
             // e.g.
-            if(tagOfInterest.pose.x <= 20) {
+            if (tagOfInterest.id == Z1) {
                 // do something
-            }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50) {
+            } else if (tagOfInterest.id == Z2) {
                 // do something else
-            }
-            else if(tagOfInterest.pose.x >= 50) {
+            } else if (tagOfInterest.id == Z3) {
                 // do something else
             }
         }
-
-
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
     }
-
     void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));

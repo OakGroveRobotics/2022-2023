@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,6 +17,18 @@ public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        SimpleServo rightOdemetry = new SimpleServo(hardwareMap, "odometry_servo_right",0, 300);
+        SimpleServo leftOdemetry = new SimpleServo(hardwareMap, "odometry_servo_left",0, 300);
+        SimpleServo frontOdemetry = new SimpleServo(hardwareMap, "odometry_servo_front",0, 300);
+
+        rightOdemetry.setInverted(true);
+        leftOdemetry.setInverted(true);
+
+        rightOdemetry.setPosition(.1);
+        leftOdemetry.setPosition(.1);
+        frontOdemetry.setPosition(.3);
+
 
         waitForStart();
 

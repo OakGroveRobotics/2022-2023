@@ -83,5 +83,8 @@ public class CascadedLift {
             Lift.set(speed);
         }
     }
+    public double get(){
+        return Lift.get();
+    }
 
 }

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,6 +34,18 @@ public class MaxAngularVeloTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        SimpleServo rightOdemetry = new SimpleServo(hardwareMap, "odometry_servo_right",0, 300);
+        SimpleServo leftOdemetry = new SimpleServo(hardwareMap, "odometry_servo_left",0, 300);
+        SimpleServo frontOdemetry = new SimpleServo(hardwareMap, "odometry_servo_front",0, 300);
+
+        rightOdemetry.setInverted(true);
+        leftOdemetry.setInverted(true);
+
+        rightOdemetry.setPosition(.1);
+        leftOdemetry.setPosition(.1);
+        frontOdemetry.setPosition(.3);
+
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
